@@ -4,6 +4,7 @@
 
 import tkinter as tk
 from tkinter import Tk, Label, Button, StringVar, Entry, filedialog, W, E, N, S
+from os import listdir
 
 
 class CoreGui(tk.Frame):
@@ -12,6 +13,7 @@ class CoreGui(tk.Frame):
         tk.Frame.__init__(self, master)
 
         self.attachFields = []
+        self.attachments = {}
 
         self.master = master
         master.title("MAPI Massmailer")
@@ -29,14 +31,16 @@ class CoreGui(tk.Frame):
 
         self.recipientFileSel = Button(master, text="Empfängerdatei:",
                                        command=self.LoadRecipient)
-        self.recipientFile = Entry(master, width=40)
+        self.recipientFileStr = StringVar()
+        self.recipientFile = Entry(master, width=40, state='readonly', textvariable=self.recipientFileStr)
 
         self.uniqueIdLab = Label(master, text="Kennfeld:")
         self.uniqueId = Entry(master, width=40)
 
         self.mailBodySel = Button(master, text="Mail Body:",
                                   command=self.LoadBody)
-        self.mailBody = Entry(master, width=40)
+        self.mailBodyStr = StringVar()
+        self.mailBody = Entry(master, width=40, state='readonly', textvariable=self.mailBodyStr)
 
         self.AttachmentsLab = Label(master, text="Anhänge:")
         self.addAttachment = Button(master, text="+",
@@ -70,6 +74,11 @@ class CoreGui(tk.Frame):
             filetypes=(("XLSX", "*.xlsx"),
                        ("CSV", "*.csv")))
 
+        self.recipientFileStr.set(filename)
+
+        #file = open(filename,'r')
+        #contentRaw = file.read()
+
         return(filename)
 
     def LoadBody(self):
@@ -79,30 +88,59 @@ class CoreGui(tk.Frame):
             filetypes=(("HTML", "*.html"),
                        ("HTML", "*.htm")))
 
-        return(filename)
+        self.mailBodyStr.set(filename)
+
+        file = open(filename,'r')
+        contentRaw = file.read()
+
+        return(filename, contentRaw)
 
     def AddAttachmentField(self):
         '''add attachment via + '''
 
-        #super(CoreGui, self).__init__()
-
         n = len(self.attachFields)
-        i = n
-        if i > 0:
-            i -= i
+        print(n)
         self.attachFields.append({})
-        #self.attachFields[n]['label'] = Label(self, text="("+str(n+1)+")")
-        #self.attachFields[n]['label'].grid(row=7+n, column=1, sticky=E)
+        self.attachFields[n]['label'] = Label(self, text="("+str(n+1)+")")
 
-        self.attachFields[i]['folderBut'] = Button(self, text="Ordner")
-        self.attachFields[i]['fileBut'] = Button(self, text="Datei")
-        self.attachFields[i]['field'] = Entry(self, width=40)
+        self.attachFields[n]['folderBut'] = Button(self, text="Ordner",
+                                                 command=lambda: self.LoadAttachFolder(n))
+        self.attachFields[n]['fileBut'] = Button(self, text="Datei",
+                                                 command=lambda: self.LoadAttachFile(n))
+        self.attachFields[n]['stringVar'] = StringVar()
+        self.attachFields[n]['field'] = Entry(self, width=37, state="readonly", textvariable=self.attachFields[n]['stringVar'])
 
-        print(self.attachFields[i])
+        print(self.attachFields[n])
 
-        self.attachFields[i]['fileBut'].grid(row=n, column=0)
-        self.attachFields[i]['folderBut'].grid(row=n, column=1)
-        self.attachFields[i]['field'].grid(row=n, column=2)
+        self.attachFields[n]['fileBut'].grid(row=n, column=0)
+        self.attachFields[n]['folderBut'].grid(row=n, column=1)
+        self.attachFields[n]['field'].grid(row=n, column=2)
+        self.attachFields[n]['label'].grid(row=n, column=3)
+
+    def LoadAttachFile(self, idNr):
+        '''load attachment file path'''
+
+        filename = filedialog.askopenfilename(
+            filetypes=(("Alle Dateien", "*.*"),
+                       ("PDF", "*.pdf")))
+
+        self.attachFields[idNr]['stringVar'].set(filename)
+        self.attachments[idNr] = filename
+
+        print(idNr)
+        print(self.attachments)
+
+    def LoadAttachFolder(self,idNr):
+        '''load folder path and list'''
+
+        foldername = filedialog.askdirectory()
+        self.attachFields[idNr]['stringVar'].set(foldername)
+
+        fileList = listdir(foldername)
+        self.attachments[idNr] = fileList
+
+        print(idNr)
+        print(self.attachments)
 
 
     def SendMail(self):
