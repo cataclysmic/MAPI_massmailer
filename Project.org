@@ -1,0 +1,44 @@
+* Functions
+
+** Connect to Outlook
+
+** Enter sender email
+
+** Enter sender alias
+
+** Enter subject
+
+** select recipient file
+
+*** unique ID
+
+*** email
+
+*** addressee
+
+*** all replacements in body file
+
+** list file content (table)
+
+** select mail body file
+
+*** preferably html
+
+** select arbitrary number of attachments
+
+*** select folder
+
+**** read folder
+
+**** filenames must contain unique ID equal to recipient file
+
+**** match with recipients
+
+**** condition on file type to allow for multi format folder content
+
+*** select single file
+
+**** gets repeatedly attached to all emails
+
+** output window
+
