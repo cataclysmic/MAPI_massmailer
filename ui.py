@@ -37,3 +37,15 @@ class CoreGui:
         self.nrAttachmentsLab.set("Anzahl der Anhänge:")
         self.nrAttachments = Entry(master)
 
+
+    def LoadRecipient(self):
+
+        filename = filedialog.askopenfilename(
+            filetypes=(("Excel 2007", "*.xlsx")))
+
+    def LoadBody(self):
+
+        filename = filedialog.askopenfilename(
+            filetypes=(("HTML", "*.html"),
+                       ("HTML", "*.htm")))
+
