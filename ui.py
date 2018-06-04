@@ -7,7 +7,7 @@ from tkinter import Tk, Label, Button, StringVar, Entry, filedialog, W, E, N, S
 
 from os import listdir
 import pandas as pd
-#import win32com.client
+import win32com.client
 
 
 class CoreGui(tk.Frame):
