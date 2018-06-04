@@ -4,6 +4,7 @@
 
 import tkinter as tk
 from tkinter import Tk, Label, Button, StringVar, Entry, filedialog, W, E, N, S
+
 from os import listdir
 import pandas as pd
 
@@ -39,6 +40,9 @@ class CoreGui(tk.Frame):
         self.uniqueIdLab = Label(master, text="ID Spalte:")
         self.uniqueId = Entry(master, width=40)
 
+        self.mailIdLab = Label(master, text="E-Mail Spalte:")
+        self.mailId = Entry(master, width=40)
+
         self.mailBodySel = Button(master, text="Mail Body:",
                                   command=self.LoadBody)
         self.mailBodyStr = StringVar()
@@ -63,10 +67,12 @@ class CoreGui(tk.Frame):
         self.recipientFile.grid(row=4, column=1)
         self.uniqueIdLab.grid(row=5,column=0, sticky=E)
         self.uniqueId.grid(row=5,column=1, sticky=W)
-        self.mailBodySel.grid(row=6, column=0, sticky=E)
-        self.mailBody.grid(row=6, column=1)
-        self.AttachmentsLab.grid(row=7, columnspan=2)
-        self.addAttachment.grid(row=7, column=1, sticky=E)
+        self.mailIdLab.grid(row=6,column=0, sticky=E)
+        self.mailId.grid(row=6,column=1, sticky=W)
+        self.mailBodySel.grid(row=7, column=0, sticky=E)
+        self.mailBody.grid(row=7, column=1)
+        self.AttachmentsLab.grid(row=8, columnspan=2)
+        self.addAttachment.grid(row=8, column=1, sticky=E)
 
         self.grid(columnspan=2,sticky="NEWS")
 
@@ -160,7 +166,6 @@ class CoreGui(tk.Frame):
             bodyFormat = mailBody.format(**replacement[0])
 
             print(bodyFormat)
-
 
 
 
