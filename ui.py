@@ -186,9 +186,10 @@ class CoreGui(tk.Frame):
                 # multiple files from folder
                 elif type(attach[j]) is list:
                     matches = [s for s in attach[j][1] if replacement['uniqueId'] in s]
-                    for el in matches:
-                        addAttach = attach[j]+'/'+el
-                        Msg.Attachments.Add(addAttach)
+                    if len(matches) > 0 :
+                        for el in matches:
+                            addAttach = attach[j]+'/'+el
+                            Msg.Attachments.Add(addAttach)
 
             # send message
             Msg.Send()
