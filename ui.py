@@ -7,6 +7,7 @@ from tkinter import Tk, Label, Button, StringVar, Entry, filedialog, W, E, N, S
 
 from os import listdir
 import pandas as pd
+#import win32com.client
 
 
 class CoreGui(tk.Frame):
@@ -150,7 +151,7 @@ class CoreGui(tk.Frame):
         print(self.attachments)
 
     def ParseMail(self):
-        '''collate all necessary data for sing email'''
+        '''collate all necessary data for single email and send'''
 
         senderMail = self.senderMail.get()
         senderAlias = self.senderAlias.get()
@@ -160,17 +161,37 @@ class CoreGui(tk.Frame):
         mailBody = self.mailBodyRaw
         attach = self.attachments
 
+        # create outlook session
+        mapiSes = win32com.client.Dispatch("Mapi.Session")
+        appliOut = win32com.client.Dispatch("Outlook.Application")
+        mapiSes.Logon("Outlook2010")
+
         for i in range(0,len(recipient.index)):
             replacement = recipient.iloc[[i]].to_dict('records')
-            print(replacement)
+            #print(replacement)
             bodyFormat = mailBody.format(**replacement[0])
+            #print(bodyFormat)
 
-            print(bodyFormat)
+            # create message
+            Msg = appliOut.CreateItem(0)
+            Msg.To = senderMail
+            Msg.Subject = subject
+            Msg.HTMLBody = bodyFormat
 
+            # add attachments
+            for j in range(0,len(attach)):
+                # single file
+                if type(attach[j]) is str:
+                    Msg.Attachments.Add(attach[j])
+                # multiple files from folder
+                elif type(attach[j]) is list:
+                    matches = [s for s in attach[j][1] if replacement['uniqueId'] in s]
+                    for el in matches:
+                        addAttach = attach[j]+'/'+el
+                        Msg.Attachments.Add(addAttach)
 
-
-    def SendMail(self):
-        '''Execute batch mailing'''
+            # send message
+            Msg.Send()
 
 
 root = Tk()
