@@ -4,10 +4,12 @@
 
 import tkinter as tk
 from tkinter import Tk, Label, Button, StringVar, Entry, filedialog, W, E, N, S
+from tkinter import Radiobutton, Checkbutton, IntVar
+from tkinter import messagebox as mbox
 
 from os import listdir
 import pandas as pd
-import win32com.client
+#import win32com.client
 
 
 class CoreGui(tk.Frame):
@@ -17,6 +19,8 @@ class CoreGui(tk.Frame):
 
         self.attachFields = [] # stores UI attachment fields
         self.attachments = {} # stores attachment references
+        self.mailForm = IntVar()
+        self.recConf = IntVar()
 
         self.master = master
         master.title("MAPI Massmailer")
@@ -44,8 +48,14 @@ class CoreGui(tk.Frame):
         self.mailIdLab = Label(master, text="E-Mail Spalte:")
         self.mailId = Entry(master, width=40)
 
-        self.mailBodySel = Button(master, text="Mail Body:",
-                                  command=self.LoadBody)
+        self.mailBodyHtmlSel = Button(master, text="Mail Body (HTML):",
+                                      command=self.LoadBodyHtml)
+        self.mailBodyHtmlStr = StringVar()
+        self.mailBodyHtml = Entry(master, width=40, state='readonly',
+                                  textvariable=self.mailBodyHtmlStr)
+
+        self.mailBodySel = Button(master, text="Mail Body (Text):",
+                                  command=self.LoadBodyText)
         self.mailBodyStr = StringVar()
         self.mailBody = Entry(master, width=40, state='readonly',
                               textvariable=self.mailBodyStr)
@@ -54,9 +64,24 @@ class CoreGui(tk.Frame):
         self.addAttachment = Button(master, text="+",
                                     command=self.AddAttachmentField)
 
+        self.mailFormatLab = Label(master, text="Format:")
+        self.mailForm.set(3)
+        self.mailFormat1 = Radiobutton(master, text="Text",
+                                       variable=self.mailForm, value=1)
+        self.mailFormat2 = Radiobutton(master, text="Html",
+                                       variable=self.mailForm, value=2)
+        self.mailFormat3 = Radiobutton(master, text="Text & Html",
+                                       variable=self.mailForm, value=3)
+
+        self.receiptConfirm = Checkbutton(master, text="mit Empfangsbestätigung",
+                                          variable=self.recConf)
+
         self.send = Button(master, text="Senden", command=self.ParseMail)
+        self.help = Button(master, text="Hilfe", command=self.onInfo)
 
 
+        # layouting the program
+        self.help.grid(row=0, column=0, sticky=W)
         self.send.grid(row=0, column=1, sticky=E)
         self.senderMailLab.grid(row=1, column=0, sticky=E)
         self.senderMail.grid(row=1, column=1)
@@ -70,10 +95,17 @@ class CoreGui(tk.Frame):
         self.uniqueId.grid(row=5,column=1, sticky=W)
         self.mailIdLab.grid(row=6,column=0, sticky=E)
         self.mailId.grid(row=6,column=1, sticky=W)
-        self.mailBodySel.grid(row=7, column=0, sticky=E)
-        self.mailBody.grid(row=7, column=1)
-        self.AttachmentsLab.grid(row=8, columnspan=2)
-        self.addAttachment.grid(row=8, column=1, sticky=E)
+        self.mailFormatLab.grid(row=7, column=0)
+        self.mailFormat1.grid(row=7, column=1, sticky=W)
+        self.mailFormat2.grid(row=7, column=1)
+        self.mailFormat3.grid(row=7, column=1, sticky=E)
+        self.mailBodyHtmlSel.grid(row=8, column=0, sticky=E)
+        self.mailBodyHtml.grid(row=8, column=1)
+        self.mailBodySel.grid(row=9, column=0, sticky=E)
+        self.mailBody.grid(row=9, column=1)
+        self.receiptConfirm.grid(row=10, column=1, sticky=E)
+        self.AttachmentsLab.grid(row=11, columnspan=2)
+        self.addAttachment.grid(row=11, column=1, sticky=E)
 
         self.grid(columnspan=2,sticky="NEWS")
 
@@ -88,18 +120,30 @@ class CoreGui(tk.Frame):
 
         self.recipientDf = pd.read_excel(filename)
 
+    def LoadBodyText(self):
+        '''Load html file contain mail body'''
 
-    def LoadBody(self):
+        filename = filedialog.askopenfilename(
+            filetypes=(("Text", "*.txt"),
+                       ("Org", "*.org"),
+                       ("MarkDown", "*.md")))
+
+        self.mailBodyStr.set(filename)
+
+        file = open(filename, 'r')
+        self.mailBodyRaw = file.read()
+
+    def LoadBodyHtml(self):
         '''Load html file contain mail body'''
 
         filename = filedialog.askopenfilename(
             filetypes=(("HTML", "*.html"),
                        ("HTML", "*.htm")))
 
-        self.mailBodyStr.set(filename)
+        self.mailBodyHtmlStr.set(filename)
 
-        file = open(filename,'r')
-        self.mailBodyRaw = file.read()
+        file = open(filename, 'r')
+        self.mailBodyHtmlRaw = file.read()
 
     def AddAttachmentField(self):
         '''add attachment via + '''
@@ -150,6 +194,10 @@ class CoreGui(tk.Frame):
         print(idNr)
         print(self.attachments)
 
+    def onInfo(self):
+        '''helpful message '''
+        mbox.showinfo("Nutzung", "Empfängerdatei: Ist eine *.xlsx Datei mit Adressdaten und Textersatzdaten.\nE-Mails können in HTML und Txt-Format versandt werden.\nTextersatzfelder werden markiert mit {Spalte} aus der Empfängerdatei.")
+
     def ParseMail(self):
         '''collate all necessary data for single email and send'''
 
@@ -158,6 +206,7 @@ class CoreGui(tk.Frame):
         subject = self.subject.get()
         recipient = self.recipientDf
         uniqueId = self.uniqueId.get()
+        mailBodyHtml = self.mailBodyHtmlRaw
         mailBody = self.mailBodyRaw
         attach = self.attachments
 
@@ -169,7 +218,13 @@ class CoreGui(tk.Frame):
         for i in range(0,len(recipient.index)):
             replacement = recipient.iloc[[i]].to_dict('records')
             #print(replacement)
-            bodyFormat = mailBody.format(**replacement[0])
+            if self.mailForm == 1:
+                bodyFormatTxt = mailBody.format(**replacement[0])
+            elif self.mailForm == 2:
+                bodyFormatHtml = mailBody.format(**replacement[0])
+            else:
+                bodyFormatTxt = mailBody.format(**replacement[0])
+                bodyFormatHtml = mailBody.format(**replacement[0])
             #print(bodyFormat)
 
             # create message
@@ -177,6 +232,9 @@ class CoreGui(tk.Frame):
             Msg.To = senderMail
             Msg.Subject = subject
             Msg.HTMLBody = bodyFormat
+            # Read receipt
+            if self.recConf == 1:
+                Msg.ReadReceipt = True
 
             # add attachments
             for j in range(0,len(attach)):
