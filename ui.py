@@ -229,9 +229,18 @@ class CoreGui(tk.Frame):
 
             # create message
             Msg = appliOut.CreateItem(0)
-            Msg.To = senderMail
+            Msg.From = senderMail
             Msg.Subject = subject
-            Msg.HTMLBody = bodyFormat
+            Msg.To = replacement[uniqueId]
+
+            if self.mailForm == 1:
+                Msg.Body = bodyFormatTxt
+            elif self.mailForm == 2:
+                Msg.HTMLBody = bodyFormatHtml
+            else:
+                Msg.Body = bodyFormatTxt
+                Msg.HTMLBody = bodyFormatHtml
+
             # Read receipt
             if self.recConf == 1:
                 Msg.ReadReceipt = True
