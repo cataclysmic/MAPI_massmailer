@@ -6,6 +6,7 @@ import tkinter as tk
 from tkinter import Tk, Label, Button, StringVar, Entry, filedialog, W, E, N, S
 from tkinter import Radiobutton, Checkbutton, IntVar
 from tkinter import messagebox as mbox
+from time import sleep
 
 from os import listdir
 import pandas as pd
@@ -76,11 +77,15 @@ class CoreGui(tk.Frame):
         self.receiptConfirm = Checkbutton(master, text="mit Empfangsbestätigung",
                                           variable=self.recConf)
 
+        self.v = IntVar()
+        self.pauseLab = Label(master, text="Pause in Sek.:")
+        self.pause = Entry(master, text=self.v, width=4)
+        self.v.set(10)
+
         self.send = Button(master, text="Senden", command=self.ParseMail)
         self.help = Button(master, text="Hilfe", command=self.onInfo)
 
-
-        # layouting the program
+        # layout the program
         self.help.grid(row=0, column=0, sticky=W)
         self.send.grid(row=0, column=1, sticky=E)
         self.senderMailLab.grid(row=1, column=0, sticky=E)
@@ -91,10 +96,10 @@ class CoreGui(tk.Frame):
         self.subject.grid(row=3, column=1)
         self.recipientFileSel.grid(row=4, column=0, sticky=E)
         self.recipientFile.grid(row=4, column=1)
-        self.uniqueIdLab.grid(row=5,column=0, sticky=E)
-        self.uniqueId.grid(row=5,column=1, sticky=W)
-        self.mailIdLab.grid(row=6,column=0, sticky=E)
-        self.mailId.grid(row=6,column=1, sticky=W)
+        self.uniqueIdLab.grid(row=5, column=0, sticky=E)
+        self.uniqueId.grid(row=5, column=1, sticky=W)
+        self.mailIdLab.grid(row=6, column=0, sticky=E)
+        self.mailId.grid(row=6, column=1, sticky=W)
         self.mailFormatLab.grid(row=7, column=0)
         self.mailFormat1.grid(row=7, column=1, sticky=W)
         self.mailFormat2.grid(row=7, column=1)
@@ -103,11 +108,13 @@ class CoreGui(tk.Frame):
         self.mailBodyHtml.grid(row=8, column=1)
         self.mailBodySel.grid(row=9, column=0, sticky=E)
         self.mailBody.grid(row=9, column=1)
+        self.pauseLab.grid(row=10, column=0, sticky=E)
+        self.pause.grid(row=10, column=1, sticky=W)
         self.receiptConfirm.grid(row=10, column=1, sticky=E)
         self.AttachmentsLab.grid(row=11, columnspan=2)
         self.addAttachment.grid(row=11, column=1, sticky=E)
 
-        self.grid(columnspan=2,sticky="NEWS")
+        self.grid(columnspan=2, sticky="NEWS")
 
     def LoadRecipient(self):
         '''Load spreadsheet file with recipients.'''
@@ -260,6 +267,7 @@ class CoreGui(tk.Frame):
 
             # send message
             Msg.Send()
+            sleep(self.pause.get())
 
 
 root = Tk()
