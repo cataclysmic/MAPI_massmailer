@@ -189,7 +189,7 @@ class CoreGui(tk.Frame):
         print(idNr)
         print(self.attachments)
 
-    def LoadAttachFolder(self,idNr):
+    def LoadAttachFolder(self, idNr):
         '''load folder path and list'''
 
         foldername = filedialog.askdirectory()
@@ -222,17 +222,17 @@ class CoreGui(tk.Frame):
         appliOut = win32com.client.Dispatch("Outlook.Application")
         mapiSes.Logon("Outlook2010")
 
-        for i in range(0,len(recipient.index)):
+        for i in range(0, len(recipient.index)):
             replacement = recipient.iloc[[i]].to_dict('records')
-            #print(replacement)
+            # print(replacement)
             if self.mailForm == 1:
                 bodyFormatTxt = mailBody.format(**replacement[0])
             elif self.mailForm == 2:
-                bodyFormatHtml = mailBody.format(**replacement[0])
+                bodyFormatHtml = mailBodyHtml.format(**replacement[0])
             else:
                 bodyFormatTxt = mailBody.format(**replacement[0])
                 bodyFormatHtml = mailBody.format(**replacement[0])
-            #print(bodyFormat)
+            # print(bodyFormat)
 
             # create message
             Msg = appliOut.CreateItem(0)
@@ -253,14 +253,14 @@ class CoreGui(tk.Frame):
                 Msg.ReadReceipt = True
 
             # add attachments
-            for j in range(0,len(attach)):
+            for j in range(0, len(attach)):
                 # single file
                 if type(attach[j]) is str:
                     Msg.Attachments.Add(attach[j])
                 # multiple files from folder
                 elif type(attach[j]) is list:
                     matches = [s for s in attach[j][1] if replacement['uniqueId'] in s]
-                    if len(matches) > 0 :
+                    if len(matches) > 0:
                         for el in matches:
                             addAttach = attach[j]+'/'+el
                             Msg.Attachments.Add(addAttach)
