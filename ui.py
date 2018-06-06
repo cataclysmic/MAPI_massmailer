@@ -9,7 +9,8 @@ from tkinter import messagebox as mbox
 from time import sleep
 
 from os import listdir
-import pandas as pd
+#import pandas as pd
+from pandas import read_excel
 #import win32com.client
 
 
@@ -28,7 +29,7 @@ class CoreGui(tk.Frame):
 
         self.label = Label(master, text="Programm zum Versenden von Massen-E-Mails")
 
-        self.senderMailLab = Label(master, text="Versand E-Mail:")
+        self.senderMailLab = Label(master, text="Von:")
         self.senderMail = Entry(master, width=40)
 
         self.senderAliasLab = Label(master, text="Sender Alias:")
@@ -43,19 +44,19 @@ class CoreGui(tk.Frame):
         self.recipientFile = Entry(master, width=40, state='readonly',
                                    textvariable=self.recipientFileStr)
 
-        self.uniqueIdLab = Label(master, text="ID Spalte:")
+        self.uniqueIdLab = Label(master, text="ID Spalte (z.B. AGS):")
         self.uniqueId = Entry(master, width=40)
 
-        self.mailIdLab = Label(master, text="E-Mail Spalte:")
+        self.mailIdLab = Label(master, text="E-Mail Spalte (z.B. EMAIL):")
         self.mailId = Entry(master, width=40)
 
-        self.mailBodyHtmlSel = Button(master, text="Mail Body (HTML):",
+        self.mailBodyHtmlSel = Button(master, text="HTML-Datei:",
                                       command=self.LoadBodyHtml)
         self.mailBodyHtmlStr = StringVar()
         self.mailBodyHtml = Entry(master, width=40, state='readonly',
                                   textvariable=self.mailBodyHtmlStr)
 
-        self.mailBodySel = Button(master, text="Mail Body (Text):",
+        self.mailBodySel = Button(master, text="Text-Datei:",
                                   command=self.LoadBodyText)
         self.mailBodyStr = StringVar()
         self.mailBody = Entry(master, width=40, state='readonly',
@@ -77,8 +78,14 @@ class CoreGui(tk.Frame):
         self.receiptConfirm = Checkbutton(master, text="mit Empfangsbestätigung",
                                           variable=self.recConf)
 
+        self.space = Label(master,text=" ")
+        self.space1 = Label(master,text=" ")
+        self.space2 = Label(master,text=" ")
+        self.address = Label(master, text="Adressdatei")
+        self.mailtext = Label(master, text="Mailinhalt")
+
         self.v = IntVar()
-        self.pauseLab = Label(master, text="Pause in Sek.:")
+        self.pauseLab = Label(master, text="Versandintervall in Sek.:")
         self.pause = Entry(master, text=self.v, width=4)
         self.v.set(10)
 
@@ -86,33 +93,38 @@ class CoreGui(tk.Frame):
         self.help = Button(master, text="Hilfe", command=self.onInfo)
 
         # layout the program
-        self.help.grid(row=0, column=0, sticky=W)
-        self.send.grid(row=0, column=1, sticky=E)
+        self.send.grid(row=0, column=0, sticky=W)
+        self.help.grid(row=0, column=1, sticky=E)
         self.senderMailLab.grid(row=1, column=0, sticky=E)
         self.senderMail.grid(row=1, column=1)
-        self.senderAliasLab.grid(row=2, column=0, sticky=E)
-        self.senderAlias.grid(row=2, column=1)
-        self.subjectLab.grid(row=3, column=0, sticky=E)
-        self.subject.grid(row=3, column=1)
-        self.recipientFileSel.grid(row=4, column=0, sticky=E)
-        self.recipientFile.grid(row=4, column=1)
-        self.uniqueIdLab.grid(row=5, column=0, sticky=E)
-        self.uniqueId.grid(row=5, column=1, sticky=W)
-        self.mailIdLab.grid(row=6, column=0, sticky=E)
-        self.mailId.grid(row=6, column=1, sticky=W)
-        self.mailFormatLab.grid(row=7, column=0)
-        self.mailFormat1.grid(row=7, column=1, sticky=W)
-        self.mailFormat2.grid(row=7, column=1)
-        self.mailFormat3.grid(row=7, column=1, sticky=E)
-        self.mailBodyHtmlSel.grid(row=8, column=0, sticky=E)
-        self.mailBodyHtml.grid(row=8, column=1)
-        self.mailBodySel.grid(row=9, column=0, sticky=E)
-        self.mailBody.grid(row=9, column=1)
-        self.pauseLab.grid(row=10, column=0, sticky=E)
-        self.pause.grid(row=10, column=1, sticky=W)
-        self.receiptConfirm.grid(row=10, column=1, sticky=E)
-        self.AttachmentsLab.grid(row=11, columnspan=2)
-        self.addAttachment.grid(row=11, column=1, sticky=E)
+        #self.senderAliasLab.grid(row=2, column=0, sticky=E)
+        #self.senderAlias.grid(row=2, column=1)
+        self.subjectLab.grid(row=2, column=0, sticky=E)
+        self.subject.grid(row=2, column=1)
+        self.space.grid(row=3, columnspan=2)
+        self.address.grid(row=4, columnspan=2)
+        self.recipientFileSel.grid(row=5, column=0, sticky=E)
+        self.recipientFile.grid(row=5, column=1)
+        self.uniqueIdLab.grid(row=6, column=0, sticky=E)
+        self.uniqueId.grid(row=6, column=1, sticky=W)
+        self.mailIdLab.grid(row=7, column=0, sticky=E)
+        self.mailId.grid(row=7, column=1, sticky=W)
+        self.space1.grid(row=8, columnspan=2)
+        self.mailtext.grid(row=9, columnspan=2)
+        self.mailFormatLab.grid(row=10, column=0)
+        self.mailFormat1.grid(row=10, column=1, sticky=W)
+        self.mailFormat2.grid(row=10, column=1)
+        self.mailFormat3.grid(row=10, column=1, sticky=E)
+        self.mailBodyHtmlSel.grid(row=11, column=0, sticky=E)
+        self.mailBodyHtml.grid(row=11, column=1)
+        self.mailBodySel.grid(row=12, column=0, sticky=E)
+        self.mailBody.grid(row=12, column=1)
+        self.space2.grid(row=13, columnspan=2)
+        self.pauseLab.grid(row=14, column=0, sticky=E)
+        self.pause.grid(row=14, column=1, sticky=W)
+        self.receiptConfirm.grid(row=14, column=1, sticky=E)
+        self.AttachmentsLab.grid(row=15, columnspan=2)
+        self.addAttachment.grid(row=15, column=1, sticky=E)
 
         self.grid(columnspan=2, sticky="NEWS")
 
@@ -125,7 +137,8 @@ class CoreGui(tk.Frame):
 
         self.recipientFileStr.set(filename)
 
-        self.recipientDf = pd.read_excel(filename)
+        self.recipientDf = read_excel(filename)
+        print(self.recipientDf)
 
     def LoadBodyText(self):
         '''Load html file contain mail body'''
