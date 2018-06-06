@@ -11,7 +11,7 @@ from time import sleep
 from os import listdir
 #import pandas as pd
 from pandas import read_excel
-#import win32com.client
+import win32com.client
 
 
 class CoreGui(tk.Frame):
