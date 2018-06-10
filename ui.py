@@ -2,26 +2,25 @@
 
 #!/usr/bin/env python3
 
-import tkinter as tk
-from tkinter import Tk, Label, Button, StringVar, Entry, filedialog, W, E, N, S
-from tkinter import Radiobutton, Checkbutton, IntVar
+# import tkinter as tk
+from tkinter import Tk, Label, Button, StringVar, Entry, filedialog, W, E
+from tkinter import Radiobutton, Checkbutton, IntVar, Frame
 from tkinter import messagebox as mbox
 from time import sleep
 
 from os import listdir
 #import pandas as pd
 from pandas import read_excel
-import win32com.client
+#from win32com.client import Dispatch
 
 
-class CoreGui(tk.Frame):
+class CoreGui(Frame):
 
     def __init__(self, master=None):
-        tk.Frame.__init__(self, master)
+        Frame.__init__(self, master)
 
         self.attachFields = [] # stores UI attachment fields
         self.attachments = {} # stores attachment references
-        self.mailForm = IntVar()
         self.recConf = IntVar()
 
         self.master = master
@@ -67,6 +66,7 @@ class CoreGui(tk.Frame):
                                     command=self.AddAttachmentField)
 
         self.mailFormatLab = Label(master, text="Format:")
+        self.mailForm = IntVar()
         self.mailForm.set(3)
         self.mailFormat1 = Radiobutton(master, text="Text",
                                        variable=self.mailForm, value=1)
@@ -226,26 +226,30 @@ class CoreGui(tk.Frame):
         subject = self.subject.get()
         recipient = self.recipientDf
         uniqueId = self.uniqueId.get()
-        mailBodyHtml = self.mailBodyHtmlRaw
-        mailBody = self.mailBodyRaw
         attach = self.attachments
 
-        # create outlook session
-        mapiSes = win32com.client.Dispatch("Mapi.Session")
-        appliOut = win32com.client.Dispatch("Outlook.Application")
-        mapiSes.Logon("Outlook2010")
+        print(str(self.mailForm.get()))
+        ## create outlook session
+        #mapiSes = Dispatch("Mapi.Session")
+        #appliOut = Dispatch("Outlook.Application")
+        #mapiSes.Logon("Outlook2010")
 
         for i in range(0, len(recipient.index)):
             replacement = recipient.iloc[[i]].to_dict('records')
             # print(replacement)
             if self.mailForm == 1:
+                mailBody = self.mailBodyRaw
                 bodyFormatTxt = mailBody.format(**replacement[0])
             elif self.mailForm == 2:
+                mailBodyHtml = self.mailBodyHtmlRaw
+                mailBodyHtml = mailBodyHtml.split("<body ")[1].split("\n",1)[1].split("</body>")[0]
                 bodyFormatHtml = mailBodyHtml.format(**replacement[0])
             else:
+                mailBody = self.mailBodyRaw
+                mailBodyHtml = self.mailBodyHtmlRaw
+                mailBodyHtml = mailBodyHtml.split("<body ")[1].split("\n",1)[1].split("</body>")[0]
                 bodyFormatTxt = mailBody.format(**replacement[0])
-                bodyFormatHtml = mailBody.format(**replacement[0])
-            # print(bodyFormat)
+                bodyFormatHtml = mailBodyHtml.format(**replacement[0])
 
             # create message
             Msg = appliOut.CreateItem(0)
