@@ -11,7 +11,7 @@ from time import sleep
 from os import listdir
 #import pandas as pd
 from pandas import read_excel
-#from win32com.client import Dispatch
+from win32com.client import Dispatch
 
 
 class CoreGui(Frame):
@@ -229,10 +229,10 @@ class CoreGui(Frame):
         attach = self.attachments
 
         print(str(self.mailForm.get()))
-        ## create outlook session
-        #mapiSes = Dispatch("Mapi.Session")
-        #appliOut = Dispatch("Outlook.Application")
-        #mapiSes.Logon("Outlook2010")
+        # create outlook session
+        mapiSes = Dispatch("Mapi.Session")
+        appliOut = Dispatch("Outlook.Application")
+        mapiSes.Logon("Outlook2010")
 
         for i in range(0, len(recipient.index)):
             replacement = recipient.iloc[[i]].to_dict('records')
