@@ -226,17 +226,18 @@ class CoreGui(Frame):
         subject = self.subject.get()
         recipient = self.recipientDf
         uniqueId = self.uniqueId.get()
+        mailId = self.mailId.get()
         attach = self.attachments
+        print(uniqueId)
 
         print(str(self.mailForm.get()))
-        # create outlook session
-        #mapiSes = Dispatch("Mapi.Session")
-        appliOut = Dispatch("Outlook.Application")
-        mapiSes.Logon("Outlook2010")
+        appliOut = Dispatch("Outlook.Application").GetNamespace("MAPI")
+
+        OutBox = appliOut.GetDefaultFolder(5)
 
         for i in range(0, len(recipient.index)):
             replacement = recipient.iloc[[i]].to_dict('records')
-            # print(replacement)
+            print(replacement)
             if self.mailForm == 1:
                 mailBody = self.mailBodyRaw
                 bodyFormatTxt = mailBody.format(**replacement[0])
@@ -252,10 +253,11 @@ class CoreGui(Frame):
                 bodyFormatHtml = mailBodyHtml.format(**replacement[0])
 
             # create message
-            Msg = appliOut.CreateItem(0)
-            Msg.From = senderMail
+            Msg = OutBox.Items.Add(0)
+            #Msg = appliOut.CreateItem(0x0)
             Msg.Subject = subject
-            Msg.To = replacement[uniqueId]
+            Msg.To = replacement[0][mailId]
+            Msg.SentOnBehalfOfName = senderMail
 
             if self.mailForm == 1:
                 Msg.Body = bodyFormatTxt
@@ -276,15 +278,17 @@ class CoreGui(Frame):
                     Msg.Attachments.Add(attach[j])
                 # multiple files from folder
                 elif type(attach[j]) is list:
-                    matches = [s for s in attach[j][1] if replacement['uniqueId'] in s]
+                    matches = [s for s in attach[j][1] if str(replacement[0][uniqueId]) in s]
                     if len(matches) > 0:
                         for el in matches:
-                            addAttach = attach[j]+'/'+el
+                            addAttach = attach[j][0]+'/'+el
                             Msg.Attachments.Add(addAttach)
 
             # send message
-            Msg.Send()
-            sleep(self.pause.get())
+            #Msg.display()
+            Msg.Save()
+            #Msg.Send()
+            sleep(float(self.pause.get()))
 
 
 root = Tk()
