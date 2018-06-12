@@ -230,7 +230,7 @@ class CoreGui(Frame):
 
         print(str(self.mailForm.get()))
         # create outlook session
-        mapiSes = Dispatch("Mapi.Session")
+        #mapiSes = Dispatch("Mapi.Session")
         appliOut = Dispatch("Outlook.Application")
         mapiSes.Logon("Outlook2010")
 
