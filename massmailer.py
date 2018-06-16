@@ -25,51 +25,71 @@ class CoreGui(Frame):
         self.attachments = {} # stores attachment references
         self.recConf = IntVar()
 
+        # labels
+        self.Lang_From = StringVar()
+        self.Lang_Subject = StringVar()
+        self.Lang_Recipient = StringVar()
+        self.Lang_uId = StringVar()
+        self.Lang_Mail = StringVar()
+        self.Lang_Html = StringVar()
+        self.Lang_Text = StringVar()
+        self.Lang_Attach = StringVar()
+        self.Lang_Format = StringVar()
+        self.Lang_Receipt = StringVar()
+        self.Lang_Interval = StringVar()
+        self.Lang_Address = StringVar()
+        self.Lang_Content = StringVar()
+        self.Lang_Parse = StringVar()
+        self.Lang_Send = StringVar()
+        self.Lang_Help = StringVar()
+        self.Lang_Log = StringVar()
+        self.Lang_File = StringVar()
+        self.Lang_Folder = StringVar()
+
+        # set text information - English
+        self.SetEng()
+
         self.master = master
-        master.title("MAPI Massmailer")
+        master.title("Outlook / Exchange Massmailer")
 
-        self.label = Label(master, text="Programm zum Versenden von Massen-E-Mails")
-
-        self.senderMailLab = Label(master, text="Von:")
+        self.senderMailLab = Label(master, textvariable=self.Lang_From)
         self.senderMail = Entry(master, width=40)
 
-        self.sv = StringVar()
-        self.storeFolderLab = Label(master, text="Speicherordner:")
-        self.storeFolder = Entry(master, width=40, text=self.sv)
-        self.sv.set("Entwürfe")
-
-        self.subjectLab = Label(master, text="Betreff:")
+        self.subjectLab = Label(master, textvariable=self.Lang_Subject)
         self.subject = Entry(master, width=40)
 
-        self.recipientFileSel = Button(master, text="Empfängerdatei:",
+        self.recipientFileSel = Button(master, textvariable=self.Lang_Recipient,
                                        command=self.LoadRecipient)
+
         self.recipientFileStr = StringVar()
         self.recipientFile = Entry(master, width=40, state='readonly',
                                    textvariable=self.recipientFileStr)
 
-        self.uniqueIdLab = Label(master, text="ID Spalte (z.B. AGS):")
+        self.uniqueIdLab = Label(master, textvariable=self.Lang_uId)
         self.uniqueId = Entry(master, width=40)
 
-        self.mailIdLab = Label(master, text="E-Mail Spalte (z.B. EMAIL):")
+        self.mailIdLab = Label(master, textvariable=self.Lang_Mail)
         self.mailId = Entry(master, width=40)
 
-        self.mailBodyHtmlSel = Button(master, text="HTML-Datei:",
+        self.mailBodyHtmlSel = Button(master, textvariable=self.Lang_Html,
                                       command=self.LoadBodyHtml)
         self.mailBodyHtmlStr = StringVar()
+        self.mailBodyHtmlStr.set("")
         self.mailBodyHtml = Entry(master, width=40, state='readonly',
                                   textvariable=self.mailBodyHtmlStr)
 
-        self.mailBodySel = Button(master, text="Text-Datei:",
+        self.mailBodySel = Button(master, textvariable=self.Lang_Text,
                                   command=self.LoadBodyText)
         self.mailBodyStr = StringVar()
+        self.mailBodyStr.set("")
         self.mailBody = Entry(master, width=40, state='readonly',
                               textvariable=self.mailBodyStr)
 
-        self.AttachmentsLab = Label(master, text="Anhänge:")
+        self.AttachmentsLab = Label(master, textvariable=self.Lang_Attach)
         self.addAttachment = Button(master, text="+",
                                     command=self.AddAttachmentField)
 
-        self.mailFormatLab = Label(master, text="Format:")
+        self.mailFormatLab = Label(master, textvariable=self.Lang_Format)
         self.mailForm = IntVar()
         self.mailForm.set(3)
         self.mailFormat1 = Radiobutton(master, text="Text",
@@ -79,35 +99,38 @@ class CoreGui(Frame):
         self.mailFormat3 = Radiobutton(master, text="Text & Html",
                                        variable=self.mailForm, value=3)
 
-        self.receiptConfirm = Checkbutton(master, text="Empfangsbestätigung anfordern.",
+        self.receiptConfirm = Checkbutton(master, textvariable=self.Lang_Receipt,
                                           variable=self.recConf)
 
         self.space = Label(master,text=" ")
         self.space1 = Label(master,text=" ")
         self.space2 = Label(master,text=" ")
-        self.address = Label(master, text="Adressdatei")
-        self.mailtext = Label(master, text="Mailinhalt")
+        self.address = Label(master, textvariable=self.Lang_Address)
+        self.mailtext = Label(master, textvariable=self.Lang_Content)
 
         self.v = IntVar()
-        self.pauseLab = Label(master, text="Versandintervall in Sek.:")
-        self.pause = Entry(master, text=self.v, width=4)
+        self.pauseLab = Label(master, textvariable=self.Lang_Interval)
+        self.pause = Entry(master, textvariable=self.v, width=4)
         self.v.set(5)
 
-        self.parse = Button(master, text="(1) Mail-Entwürfe anlegen", command=self.ParseMail)
-        self.send = Button(master, text="(2) Mails versenden", command=self.SendMail)
-        self.help = Button(master, text="Hinweise", command=self.onInfo)
+        self.parse = Button(master, textvariable=self.Lang_Parse, command=self.ParseMail)
+        self.send = Button(master, textvariable=self.Lang_Send, command=self.SendMail)
+        self.help = Button(master, textvariable=self.Lang_Help, command=self.onInfo)
+
+        self.LangEn = Button(master, text="EN", command=self.SetEng)
+        self.LangDe = Button(master, text="DE", command=self.SetDe)
 
         self.logLocationStr = StringVar()
-        self.logLoc = Button(master, text="Log-Ordner:", command=self.LogFolder)
+        self.logLoc = Button(master, textvariable=self.Lang_Log, command=self.LogFolder)
         self.logLocation = Entry(master, width=40, state='readonly',
                                  textvariable=self.logLocationStr)
 
         # layout the program
+        self.LangEn.grid(row=0, column=0, sticky=E)
+        self.LangDe.grid(row=0, column=1, sticky=W)
         self.help.grid(row=0, column=1, sticky=E)
         self.senderMailLab.grid(row=1, column=0, sticky=E)
         self.senderMail.grid(row=1, column=1)
-        self.storeFolderLab.grid(row=2, column=0, sticky=E)
-        self.storeFolder.grid(row=2, column=1)
         self.subjectLab.grid(row=3, column=0, sticky=E)
         self.subject.grid(row=3, column=1)
         self.space.grid(row=4, columnspan=2)
@@ -152,7 +175,7 @@ class CoreGui(Frame):
 
         filename = filedialog.askopenfilename(
             filetypes=(("XLSX", "*.xlsx"),
-                       ("Alle Dateien", "*.*")))
+                       ("All files", "*.*")))
 
         self.recipientFileStr.set(filename)
 
@@ -194,9 +217,9 @@ class CoreGui(Frame):
         self.attachFields[n]['label'] = Label(self, text="("+str(n+1)+")")
         self.attachFields[n]['space'] = Label(self, text="   ")
 
-        self.attachFields[n]['folderBut'] = Button(self, text="Ordner",
+        self.attachFields[n]['folderBut'] = Button(self, textvariable=self.Lang_Folder,
                                                  command=lambda: self.LoadAttachFolder(n))
-        self.attachFields[n]['fileBut'] = Button(self, text="Datei",
+        self.attachFields[n]['fileBut'] = Button(self, textvariable=self.Lang_File,
                                                  command=lambda: self.LoadAttachFile(n))
         self.attachFields[n]['stringVar'] = StringVar()
         self.attachFields[n]['field'] = Entry(self, width=43, state="readonly",
@@ -214,7 +237,7 @@ class CoreGui(Frame):
         '''load attachment file path'''
 
         filename = filedialog.askopenfilename(
-            filetypes=(("Alle Dateien", "*.*"),
+            filetypes=(("All files", "*.*"),
                        ("PDF", "*.pdf")))
 
         self.attachFields[idNr]['stringVar'].set(filename)
@@ -237,39 +260,7 @@ class CoreGui(Frame):
 
     def onInfo(self):
         '''helpful message '''
-        mbox.showinfo("Nutzung",
-"""
-           'Von' - Versenderadresse
-'Speicherordner' - Zielordner für das Anlegen der E-Mails
-       'Betreff' - E-Mail-Betreff
-
-            Adressdatei
-'Empfängerdatei' - XLSX-Datei mit Serienmaildaten
-                   Daten befinden sich im ersten Tabellenblatt.
-     'ID Spalte' - Spaltenbezeichnung (Zeile 1) in der XLSX mit der ID des Eintrags.
-                   Die ID ist die Grundlage der automatischen Auswahl der Anhänge.
- 'E-Mail Spalte' - Spaltenbezeichnung der Emppfänger-E-Mail-Spalten
-
-            Mailinhalt
-E-Mail können als Text, Html oder beides versandt werden. Dafür müssen die entsprechenden
-Dateien vorliegen. Diese können z.B. in Word erstellt werden. Das Programm führt einen
-Textersatz vergleichbar mit einem Serienbrief im Mailkörper anhand der Daten in der
-Empfägnerdatei durch. Textersatz im Mailtext wird als {Spaltenname} markiert.
-
-Versandintervall - Legt das Intervall zwischem dem Senden zweier Mails fest.
-mit Empfangsbestätigung - Aktiviert die Forderung einer Empfangsbestätigung.
-
-
-            Anhänge
-Mit dem "+" Symbol kann eine arbiträre Anzahl an Anhängen beigefügt werden.
-       'Datei'  - Einzeldatei die JEDER Mail beigefügt wird.
-       'Ordner' - Sammlung von Dateien, die anhand der ID der JEWEILIGEN Mail beigefügt werden.
-
-
-(1) - Zuerst werden die Mail im Ordner Entwürfe angelegt und können dort geprüft werden.
-(2) - Startet den Versand der Mails.
-""")
-
+        mbox.showinfo("Nutzung", "%s" % self.hint)
 
     def ParseMail(self):
         '''collate all necessary data for single email and send'''
@@ -281,21 +272,21 @@ Mit dem "+" Symbol kann eine arbiträre Anzahl an Anhängen beigefügt werden.
             uniqueId = self.uniqueId.get()
             mailId = self.mailId.get()
             attach = self.attachments
+
         except AttributeError:
-            mbox.showwarning("Fehler",
-                             "Bitte überprüfen Sie Ihre Eingabe.\nEs wurden nicht alle erforderlichen Felder befüllt.")
+            mbox.showwarning("Error", "%s" % self.Lang_FormError)
             return()
 
 
-        if int(self.mailForm.get()) == 1 and self.mailBodyRaw.strip() == "":
-            mbox.showinfo("Das gewählt Versandformat erfordert die Auswahl einer Text-Datei.")
-            return("NO")
-        elif int(self.mailForm.get()) == 2 and self.mailBodyHtmlRaw.strip() == "":
-            mbox.showinfo("Das gewählt Versandformat erfordert die Auswahl einer HTML-Datei.")
-            return("NO")
-        elif int(self.mailForm.get()) == 3 and (self.mailBodyHtmlRaw.strip() == "" or self.mailBodyRaw.strip() == ""):
-            mbox.showinfo("Das gewählt Versandformat erfordert die Auswahl einer Text- und einer HTML-Datei.")
-            return("NO")
+        if int(self.mailForm.get()) == 1 and self.mailBodyStr.get().strip() == "":
+            mbox.showwarning("Error", "%s" %  self.Lang_TError)
+            return()
+        elif int(self.mailForm.get()) == 2 and self.mailBodyHtmlStr.get().strip() == "":
+            mbox.showwarning("Error", "%s" % self.Lang_HError)
+            return()
+        elif int(self.mailForm.get()) == 3 and (self.mailBodyHtmlStr.get().strip() == "" or self.mailBodyStr.get().strip() == ""):
+            mbox.showwarning("Error", "%s" % self.Lang_THError)
+            return()
 
         mailForm = int(self.mailForm.get())
         print(uniqueId)
@@ -394,7 +385,6 @@ Mit dem "+" Symbol kann eine arbiträre Anzahl an Anhängen beigefügt werden.
         '''find the storage folder'''
 
         fromMail = self.senderMail.get()
-        storeFolder = self.storeFolder.get()
 
         appliOut = Dispatch("Outlook.Application").GetNamespace("MAPI")
         for i in range(1,20):
@@ -402,11 +392,128 @@ Mit dem "+" Symbol kann eine arbiträre Anzahl an Anhängen beigefügt werden.
             if str(accounts) == fromMail:
                 for j in range(1,20):
                     boxes = appliOut.Folders(i).Folders(j)
-                    if str(boxes) == storeFolder:
+                    if str(boxes) == "Entwürfe":
                         break
                 break
         print(boxes)
         return(boxes)
+
+    def SetEng(self):
+        '''set english'''
+
+        # labels
+        self.Lang_From.set("From:")
+        self.Lang_Subject.set("Subject:")
+        self.Lang_Recipient.set("Recipient file:")
+        self.Lang_uId.set("ID column:")
+        self.Lang_Mail.set("Email column:")
+        self.Lang_Html.set("HTML file:")
+        self.Lang_Text.set("Text file:")
+        self.Lang_Attach.set("Attachments:")
+        self.Lang_Format.set("Format:")
+        self.Lang_Receipt.set("Require read receipt")
+        self.Lang_Interval.set("Send interval in sec.:")
+        self.Lang_Address.set("Bulk mail data")
+        self.Lang_Content.set("Email content")
+        self.Lang_Parse.set("" "(1) Create email drafts")
+        self.Lang_Send.set("(2) Send emails" )
+        self.Lang_Help.set("Hints")
+        self.Lang_Log.set("Log folder:")
+        self.Lang_File.set("File:")
+        self.Lang_Folder.set("Folder:")
+        self.Lang_TError = "The chosen format requires the selection of a text file."
+        self.Lang_HError = "The chosen format requires the selection of an html file."
+        self.Lang_THError = "The chosen format requires the selection of a text and an html file."
+        self.Lang_FormError = "Please check the form.\nNot all required fields are filled."
+        self.hint = """
+          'From:' - Sender email
+       'Subject:' - Email subject
+
+            Bulk mail data
+'Recipient file' - XLSX-File containing bulk mail data.
+                   Data has to be stored in the first spreadsheet.
+     'ID column' - Column name (1. row) identifying each recipients IDs.
+                   This ID is used to select attachments from selections.
+  'Email column' - Column name identifying recipient email.
+'Require read receipt'   - Activates the read receipt request.
+
+            Attachments
+Using the "+" symbol you can add an arbitrary number of attachments.
+         'File' - Single file that gets attached to each email.
+       'Folder' - File collection from which a file gets selected for attaching based on ID.
+
+            Email content
+Emails can be send as text, html or both. You need to provide the appropriate files.
+You can creates those using, e.g., Word. The tool does a character replacement in the mail
+body similar to a bulk letter program. The replacement data is contained in
+additional columns in the recipient file. Replacement texts is marked by {Column name}.
+
+            'Log-folder' - Folder to save the log file to.
+'Send interval in sec.:' - Sets the intermission between delivery of each mail.
+
+
+(1) - Create bulk emails in account's draft folder for examination.
+(2) - Start mail delivery.
+"""
+
+
+    def SetDe(self):
+        '''set German'''
+
+        # labels
+        self.Lang_From.set("Von:")
+        self.Lang_Subject.set("Betreff:")
+        self.Lang_Recipient.set("Empfängerdatei:")
+        self.Lang_uId.set("ID-Spalte:")
+        self.Lang_Mail.set("E-Mail-Spalte:")
+        self.Lang_Html.set("HTML-Datei:")
+        self.Lang_Text.set("Text-Datei:")
+        self.Lang_Attach.set("Anhänge:")
+        self.Lang_Format.set("Format:")
+        self.Lang_Receipt.set("Empfangsbestätigung anfordern:")
+        self.Lang_Interval.set("Versandintervall in Sek.:")
+        self.Lang_Address.set("Serienmail-Daten")
+        self.Lang_Content.set("Mailinhalt")
+        self.Lang_Parse.set("" "(1) E-Mail-Entwürfe anlegen")
+        self.Lang_Send.set("(2) Entwürfe versenden" )
+        self.Lang_Help.set("Hinweise")
+        self.Lang_Log.set("Log-Ordner:")
+        self.Lang_File.set("Datei:")
+        self.Lang_Folder.set("Ordner:")
+        self.Lang_TError = "Das gewählt Versandformat erfordert die Auswahl einer Text-Datei."
+        self.Lang_HError = "Das gewählt Versandformat erfordert die Auswahl einer HTML-Datei."
+        self.Lang_THError = "Das gewählt Versandformat erfordert die Auswahl einer Text- und einer HTML-Datei."
+        self.Lang_FormError = "Bitte überprüfen Sie Ihre Eingabe.\nEs wurden nicht alle erforderlichen Felder befüllt."
+        self.hint = """
+           'Von' - Versenderadresse
+       'Betreff' - E-Mail-Betreff
+
+            Serienmail-Daten
+'Empfängerdatei' - XLSX-Datei mit Serienmaildaten
+                   Daten befinden sich im ersten Tabellenblatt.
+     'ID-Spalte' - Spaltenbezeichnung (Zeile 1) in der XLSX mit der ID des Eintrags.
+                   Die ID ist die Grundlage der automatischen Auswahl der Anhänge.
+ 'E-Mail-Spalte' - Spaltenbezeichnung der Emppfänger-E-Mail-Spalten
+Empfangsbestätigung anfordern - Aktiviert die Forderung einer Empfangsbestätigung.
+
+            Anhänge
+Mit dem "+" Symbol kann eine arbiträre Anzahl an Anhängen beigefügt werden.
+       'Datei'  - Einzeldatei die JEDER Mail beigefügt wird.
+       'Ordner' - Sammlung von Dateien, die anhand der ID der JEWEILIGEN Mail beigefügt werden.
+
+            Mailinhalt
+E-Mails können als Text, Html oder beides versandt werden. Dafür müssen die entsprechenden
+Dateien vorliegen. Diese können z.B. in Word erstellt werden. Das Programm führt einen
+Textersatz vergleichbar mit einem Serienbrief im Mailkörper anhand der Daten in der
+Empfägnerdatei durch. Textersatz im Mailtext wird als {Spaltenname} markiert.
+
+    'Log-Ordner' - Ordner in welchem die Log-Datei gespeichert wird.
+Versandintervall - Legt das Intervall zwischem dem Senden zweier Mails fest.
+
+(1) - Zuerst werden die Mail im Ordner Entwürfe angelegt und können dort geprüft werden.
+(2) - Startet den Versand der Mails.
+"""
+
 
 
 root = Tk()
