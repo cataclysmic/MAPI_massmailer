@@ -1,1 +1,57 @@
-#+Title: Massmailer with Attachments using MAPI
+#+Title: Massmailer using MAPI for Outlook + Exchange
+
+
+* Description
+
+This tool allows for creating bulk emails for Outlook similar to creating
+bulk mail in Word.
+
+* Details
+
+- Version: *0.1*
+- Written in Python 3.4
+- Tested on Windows 10  64bit with Office 2010 32bit
+
+
+* Features
+
+- selection of sender email box on systems with multiple emails boxes
+- sending emails in text and/or html format
+- text replacement in the email body by XLSX-list data
+- auto selection of attachment from a folder based on a provided ID that is contained in the attachment's name in the XLSX-list
+- single file attachment repetitiously added to each email
+- setting a read receipt request
+- storage of all bulk emails in the selected account's *Drafts* folder for review prior to sending
+- creates a log file for sent emails
+- creates an MD5 fingerprint of the log-file
+- setting of the delay between two emails being sent (to avoid recognition as spam)
+- English and German interface
+- shows a console windows that allows to see the what's going on in the back
+
+* Dependencies
+
+- working MAPI for Outlook+Exchange
+- Python >= 3.4
+- Module dependencies:
+  + tkinter
+  + time
+  + hashlib
+  + os
+  + pandas
+  + xlrd
+  + win32com
+
+* Screenshots
+
+** English
+
+[[./img/english.png]]
+
+** German
+
+[[./img/german.png]]
+
+* Convenience
+
+For convenience reasons I created a ready to run 32bit version.
+You can [[https://www.dropbox.com/s/5kcspmifl4hcwui/massmailer.zip?dl=0][download it from here]] .
