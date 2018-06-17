@@ -54,4 +54,4 @@ bulk mail in Word.
 * Convenience
 
 For convenience reasons I created a ready to run 32bit version.
-You can [[https://www.dropbox.com/s/5kcspmifl4hcwui/massmailer.zip?dl=0][download it from here]] .
+You can [[https://www.dropbox.com/s/5kcspmifl4hcwui/massmailer.zip?dl=1][download it from here]] .
