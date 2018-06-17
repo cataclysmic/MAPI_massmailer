@@ -211,7 +211,6 @@ class CoreGui(Frame):
         '''add attachment via + '''
 
         n = len(self.attachFields)
-#        print(n)
         self.attachFields.append({})
 
         self.attachFields[n]['label'] = Label(self, text="("+str(n+1)+")")
@@ -225,7 +224,6 @@ class CoreGui(Frame):
         self.attachFields[n]['field'] = Entry(self, width=43, state="readonly",
                                               textvariable=self.attachFields[n]['stringVar'])
 
-#        print(self.attachFields[n])
 
         self.attachFields[n]['fileBut'].grid(row=n, column=0)
         self.attachFields[n]['folderBut'].grid(row=n, column=1)
@@ -243,7 +241,6 @@ class CoreGui(Frame):
         self.attachFields[idNr]['stringVar'].set(filename)
         self.attachments[idNr] = filename
 
-        print(idNr)
         print(self.attachments)
 
     def LoadAttachFolder(self, idNr):
@@ -255,7 +252,6 @@ class CoreGui(Frame):
         fileList = listdir(foldername)
         self.attachments[idNr] = [foldername, fileList]
 
-        print(idNr)
         print(self.attachments)
 
     def onInfo(self):
@@ -289,7 +285,6 @@ class CoreGui(Frame):
             return()
 
         mailForm = int(self.mailForm.get())
-        print(uniqueId)
 
 
         OutBox = self.GetOutbox()
@@ -392,10 +387,9 @@ class CoreGui(Frame):
             if str(accounts) == fromMail:
                 for j in range(1,20):
                     boxes = appliOut.Folders(i).Folders(j)
-                    if str(boxes) == "Entwürfe":
+                    if str(boxes) == "Entwürfe" or str(boxes) == "Drafts":
                         break
                 break
-        print(boxes)
         return(boxes)
 
     def SetEng(self):
