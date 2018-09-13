@@ -206,6 +206,7 @@ class CoreGui(Frame):
 
         file = open(filename, 'r')
         self.mailBodyHtmlRaw = file.read()
+        self.mailBodyHtmlRaw = self.mailBodyHtmlRaw.replace("[", "{").replace("]", "}")
 
     def AddAttachmentField(self):
         '''add attachment via + '''
@@ -286,11 +287,7 @@ class CoreGui(Frame):
 
         mailForm = int(self.mailForm.get())
 
-
         OutBox = self.GetOutbox()
-        #appliOut = Dispatch("Outlook.Application").GetNamespace("MAPI")
-
-        #OutBox = appliOut.GetDefaultFolder(5)
 
         for i in range(0, len(recipient.index)):
             replacement = recipient.iloc[[i]].to_dict('records')
@@ -300,18 +297,18 @@ class CoreGui(Frame):
                 bodyFormatTxt = mailBody.format(**replacement[0])
             elif mailForm == 2:
                 mailBodyHtml = self.mailBodyHtmlRaw
-                mailBodyHtml = mailBodyHtml.split("<body ")[1].split("\n",1)[1].split("</body>")[0]
+                mailBodyHtml = mailBodyHtml.split("<body ")[1].split("\n", 1)[1].split("</body>")[0]
                 bodyFormatHtml = mailBodyHtml.format(**replacement[0])
             else:
                 mailBody = self.mailBodyRaw
                 mailBodyHtml = self.mailBodyHtmlRaw
-                mailBodyHtml = mailBodyHtml.split("<body ")[1].split("\n",1)[1].split("</body>")[0]
+                mailBodyHtml = mailBodyHtml.split("<body ")[1].split("\n", 1)[1].split("</body>")[0]
                 bodyFormatTxt = mailBody.format(**replacement[0])
                 bodyFormatHtml = mailBodyHtml.format(**replacement[0])
 
             # create message
-            Msg = OutBox.Items.Add(0)
-            #Msg = appliOut.CreateItem(0x0)
+            #Msg = OutBox.Items.Add(0)
+            Msg = self.GetOutbox().Items.Add(0)
             Msg.Subject = subject
             Msg.To = replacement[0][mailId]
             Msg.SentOnBehalfOfName = senderMail
@@ -342,7 +339,7 @@ class CoreGui(Frame):
                             Msg.Attachments.Add(addAttach)
 
             # send message
-            #Msg.display()
+            # Msg.display()
             Msg.Save()
 
     def SendMail(self):
@@ -354,7 +351,8 @@ class CoreGui(Frame):
         file.write(self.subject.get()+"\n\n")
         OutBox = self.GetOutbox()
         messages = OutBox.Items
-        for i in range(0,len(messages)):
+        print(messages)
+        for i in range(0, len(messages)):
             msg = messages.GetLast()
             toMail = str(msg.To)
             file.write(str(ctime())+" - "+toMail+"\n")
@@ -382,16 +380,17 @@ class CoreGui(Frame):
         fromMail = self.senderMail.get()
 
         appliOut = Dispatch("Outlook.Application").GetNamespace("MAPI")
-        for i in range(1,20):
+        for i in range(1, 20):
             accounts = appliOut.Folders(i)
             if str(accounts) == fromMail:
-                for j in range(1,20):
+                for j in range(1, 20):
                     boxes = appliOut.Folders(i).Folders(j)
                     if str(boxes) == "Entwürfe" or str(boxes) == "Drafts":
                         break
                 break
         return(boxes)
 
+# --- English
     def SetEng(self):
         '''set english'''
 
@@ -450,7 +449,7 @@ additional columns in the recipient file. Replacement texts is marked by {Column
 (2) - Start mail delivery.
 """
 
-
+# --- German
     def SetDe(self):
         '''set German'''
 
@@ -509,7 +508,7 @@ Versandintervall - Legt das Intervall zwischem dem Senden zweier Mails fest.
 """
 
 
-
+# --- create window
 root = Tk()
 my_gui = CoreGui(root)
 root.mainloop()
