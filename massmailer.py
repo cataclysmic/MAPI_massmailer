@@ -310,7 +310,7 @@ class CoreGui(Frame):
             #Msg = OutBox.Items.Add(0)
             Msg = self.GetOutbox().Items.Add(0)
             Msg.Subject = subject
-            Msg.To = replacement[0][mailId]
+            Msg.To = replacement[0][mailId].replace("\n","").strip()
             Msg.SentOnBehalfOfName = senderMail
 
             if mailForm == 1:
