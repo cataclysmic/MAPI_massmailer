@@ -59,7 +59,7 @@ class CoreGui(Frame):
         self.subject = Entry(master, width=40)
 
         self.recipientFileSel = Button(master, textvariable=self.Lang_Recipient,
-                                       command=self.LoadRecipient)
+                                       command=self.LoadRecipient, bg="#6495ed")
 
         self.recipientFileStr = StringVar()
         self.recipientFile = Entry(master, width=40, state='readonly',
@@ -72,14 +72,14 @@ class CoreGui(Frame):
         self.mailId = Entry(master, width=40)
 
         self.mailBodyHtmlSel = Button(master, textvariable=self.Lang_Html,
-                                      command=self.LoadBodyHtml)
+                                      command=self.LoadBodyHtml, bg="#6495ed")
         self.mailBodyHtmlStr = StringVar()
         self.mailBodyHtmlStr.set("")
         self.mailBodyHtml = Entry(master, width=40, state='readonly',
                                   textvariable=self.mailBodyHtmlStr)
 
         self.mailBodySel = Button(master, textvariable=self.Lang_Text,
-                                  command=self.LoadBodyText)
+                                  command=self.LoadBodyText, bg="#6495ed")
         self.mailBodyStr = StringVar()
         self.mailBodyStr.set("")
         self.mailBody = Entry(master, width=40, state='readonly',
@@ -87,7 +87,7 @@ class CoreGui(Frame):
 
         self.AttachmentsLab = Label(master, textvariable=self.Lang_Attach)
         self.addAttachment = Button(master, text="+",
-                                    command=self.AddAttachmentField)
+                                    command=self.AddAttachmentField, bg="#6495ed")
 
         self.mailFormatLab = Label(master, textvariable=self.Lang_Format)
         self.mailForm = IntVar()
@@ -113,15 +113,15 @@ class CoreGui(Frame):
         self.pause = Entry(master, textvariable=self.v, width=4)
         self.v.set(5)
 
-        self.parse = Button(master, textvariable=self.Lang_Parse, command=self.ParseMail)
-        self.send = Button(master, textvariable=self.Lang_Send, command=self.SendMail)
-        self.help = Button(master, textvariable=self.Lang_Help, command=self.onInfo)
+        self.parse = Button(master, textvariable=self.Lang_Parse, command=self.ParseMail, width=50, bg="#6495ed")
+        self.send = Button(master, textvariable=self.Lang_Send, command=self.SendMail, width=50, bg="#6495ed")
+        self.help = Button(master, textvariable=self.Lang_Help, command=self.onInfo, bg="#6495ed")
 
-        self.LangEn = Button(master, text="EN", command=self.SetEng)
-        self.LangDe = Button(master, text="DE", command=self.SetDe)
+        self.LangEn = Button(master, text="EN", command=self.SetEng, bg="#6495ed")
+        self.LangDe = Button(master, text="DE", command=self.SetDe, bg="#6495ed")
 
         self.logLocationStr = StringVar()
-        self.logLoc = Button(master, textvariable=self.Lang_Log, command=self.LogFolder)
+        self.logLoc = Button(master, textvariable=self.Lang_Log, command=self.LogFolder, bg="#6495ed")
         self.logLocation = Entry(master, width=40, state='readonly',
                                  textvariable=self.logLocationStr)
 
@@ -329,13 +329,13 @@ class CoreGui(Frame):
             for j in range(0, len(attach)):
                 # single file
                 if type(attach[j]) is str:
-                    Msg.Attachments.Add(attach[j])
+                    Msg.Attachments.Add('"'+attach[j]+'"')
                 # multiple files from folder
                 elif type(attach[j]) is list:
                     matches = [s for s in attach[j][1] if str(replacement[0][uniqueId]) in s]
                     if len(matches) > 0:
                         for el in matches:
-                            addAttach = attach[j][0]+'/'+el
+                            addAttach = '"'+attach[j][0]+'/'+el+'"'
                             Msg.Attachments.Add(addAttach)
 
             # send message
@@ -402,7 +402,7 @@ class CoreGui(Frame):
         self.Lang_Mail.set("Email column:")
         self.Lang_Html.set("HTML file:")
         self.Lang_Text.set("Text file:")
-        self.Lang_Attach.set("Attachments:")
+        self.Lang_Attach.set("Add Attachments:")
         self.Lang_Format.set("Format:")
         self.Lang_Receipt.set("Require read receipt")
         self.Lang_Interval.set("Send interval in sec.:")
@@ -461,7 +461,7 @@ additional columns in the recipient file. Replacement texts is marked by {Column
         self.Lang_Mail.set("E-Mail-Spalte:")
         self.Lang_Html.set("HTML-Datei:")
         self.Lang_Text.set("Text-Datei:")
-        self.Lang_Attach.set("Anhänge:")
+        self.Lang_Attach.set("Anhänge hinzufügen:")
         self.Lang_Format.set("Format:")
         self.Lang_Receipt.set("Empfangsbestätigung anfordern:")
         self.Lang_Interval.set("Versandintervall in Sek.:")
