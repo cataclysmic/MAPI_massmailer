@@ -201,7 +201,7 @@ class CoreGui(Frame):
 
         filename = filedialog.askopenfilename(
             filetypes=(("HTML", "*.html"),
-                       ("HTML", "*.htm")))
+                       ("HTM", "*.htm")))
 
         self.mailBodyHtmlStr.set(filename)
 
@@ -219,9 +219,11 @@ class CoreGui(Frame):
         self.attachFields[n]['space'] = Label(self, text="   ")
 
         self.attachFields[n]['folderBut'] = Button(self, textvariable=self.Lang_Folder,
-                                                 command=lambda: self.LoadAttachFolder(n))
+                                                   command=lambda: self.LoadAttachFolder(n),bg="#6495ed")
         self.attachFields[n]['fileBut'] = Button(self, textvariable=self.Lang_File,
-                                                 command=lambda: self.LoadAttachFile(n))
+                                                 command=lambda: self.LoadAttachFile(n),bg="#57cefa")
+        self.attachFields[n]['removeBut'] = Button(self, text="-",
+                                                   command=lambda: self.RemoveFile(n),bg="#cd5c5c")
         self.attachFields[n]['stringVar'] = StringVar()
         self.attachFields[n]['field'] = Entry(self, width=43, state="readonly",
                                               textvariable=self.attachFields[n]['stringVar'])
@@ -232,6 +234,7 @@ class CoreGui(Frame):
         self.attachFields[n]['space'].grid(row=n, column=2)
         self.attachFields[n]['field'].grid(row=n, column=3, sticky="E")
         self.attachFields[n]['label'].grid(row=n, column=4, sticky="E")
+        self.attachFields[n]['removeBut'].grid(row=n, column=5, sticky="E")
 
     def LoadAttachFile(self, idNr):
         '''load attachment file path'''
@@ -253,6 +256,15 @@ class CoreGui(Frame):
 
         fileList = listdir(foldername)
         self.attachments[idNr] = [foldername, fileList]
+
+        print(self.attachments)
+
+    def RemoveFile(self, idNr):
+        '''removing attached files'''
+
+        self.attachFields[idNr]['stringVar'].set('')
+
+        self.attachments.pop(idNr)
 
         print(self.attachments)
 
