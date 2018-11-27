@@ -13,7 +13,7 @@ from hashlib import md5
 from os import listdir
 #import pandas as pd
 from pandas import read_excel
-from win32com.client import Dispatch
+#from win32com.client import Dispatch
 
 
 class CoreGui(Frame):
@@ -52,7 +52,7 @@ class CoreGui(Frame):
         self.master = master
         master.title("Outlook / Exchange Massmailer")
 
-        self.senderMailLab = Label(master, textvariable=self.Lang_From)
+        self.senderMailLab = Label(master, textvariable=self.Lang_From,width=20)
         self.senderMail = Entry(master, width=40)
 
         self.subjectLab = Label(master, textvariable=self.Lang_Subject)
@@ -130,17 +130,17 @@ class CoreGui(Frame):
         self.LangDe.grid(row=0, column=1, sticky=W)
         self.help.grid(row=0, column=1, sticky=E)
         self.senderMailLab.grid(row=1, column=0, sticky=E)
-        self.senderMail.grid(row=1, column=1)
+        self.senderMail.grid(row=1, column=1,sticky="EW")
         self.subjectLab.grid(row=3, column=0, sticky=E)
-        self.subject.grid(row=3, column=1)
+        self.subject.grid(row=3, column=1, sticky="EW")
         self.space.grid(row=4, columnspan=2)
-        self.address.grid(row=5, columnspan=2)
+        self.address.grid(row=5, columnspan=2, sticky="EW")
         self.recipientFileSel.grid(row=6, column=0, sticky=E)
-        self.recipientFile.grid(row=6, column=1)
+        self.recipientFile.grid(row=6, column=1, sticky="EW")
         self.uniqueIdLab.grid(row=7, column=0, sticky=E)
-        self.uniqueId.grid(row=7, column=1, sticky=W)
+        self.uniqueId.grid(row=7, column=1, sticky="EW")
         self.mailIdLab.grid(row=8, column=0, sticky=E)
-        self.mailId.grid(row=8, column=1, sticky=W)
+        self.mailId.grid(row=8, column=1, sticky="EW")
         self.space1.grid(row=9, columnspan=2)
         self.mailtext.grid(row=10, columnspan=2)
         self.mailFormatLab.grid(row=11, column=0)
@@ -148,9 +148,9 @@ class CoreGui(Frame):
         self.mailFormat2.grid(row=11, column=1)
         self.mailFormat3.grid(row=11, column=1, sticky=E)
         self.mailBodyHtmlSel.grid(row=12, column=0, sticky=E)
-        self.mailBodyHtml.grid(row=12, column=1)
+        self.mailBodyHtml.grid(row=12, column=1, sticky="EW")
         self.mailBodySel.grid(row=13, column=0, sticky=E)
-        self.mailBody.grid(row=13, column=1)
+        self.mailBody.grid(row=13, column=1, sticky="EW")
         self.receiptConfirm.grid(row=15, column=1, sticky=W)
         self.AttachmentsLab.grid(row=16, columnspan=2)
         self.addAttachment.grid(row=16, column=1, sticky=E)
@@ -159,7 +159,7 @@ class CoreGui(Frame):
 
         self.parse.grid(columnspan=2, sticky="EW")
         self.logLoc.grid(row=20, column=0, sticky=E)
-        self.logLocation.grid(row=20, column=1, sticky=E)
+        self.logLocation.grid(row=20, column=1, sticky="EW")
         self.pauseLab.grid(row=21, column=0, sticky=E)
         self.pause.grid(row=21, column=1, sticky=W)
         self.send.grid(columnspan=2, sticky="EW")
@@ -229,10 +229,10 @@ class CoreGui(Frame):
                                               textvariable=self.attachFields[n]['stringVar'])
 
 
-        self.attachFields[n]['fileBut'].grid(row=n, column=0)
-        self.attachFields[n]['folderBut'].grid(row=n, column=1)
+        self.attachFields[n]['fileBut'].grid(row=n, column=0, sticky=W)
+        self.attachFields[n]['folderBut'].grid(row=n, column=1, sticky=W)
         self.attachFields[n]['space'].grid(row=n, column=2)
-        self.attachFields[n]['field'].grid(row=n, column=3, sticky="E")
+        self.attachFields[n]['field'].grid(row=n, column=3, sticky="EW")
         self.attachFields[n]['label'].grid(row=n, column=4, sticky="E")
         self.attachFields[n]['removeBut'].grid(row=n, column=5, sticky="E")
 
@@ -524,4 +524,5 @@ Versandintervall - Legt das Intervall zwischem dem Senden zweier Mails fest.
 # --- create window
 root = Tk()
 my_gui = CoreGui(root)
+root.grid_columnconfigure(1, weight=5)
 root.mainloop()
