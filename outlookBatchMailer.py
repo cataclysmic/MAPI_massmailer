@@ -297,12 +297,12 @@ class CoreGui(Frame):
                 bodyFormatTxt = mailBody.format(**replacement[0])
             elif mailForm == 2:
                 mailBodyHtml = self.mailBodyHtmlRaw
-                mailBodyHtml = mailBodyHtml.split("<body ")[1].split("\n", 1)[1].split("</body>")[0]
+                #mailBodyHtml = mailBodyHtml.split("<body ")[1].split("\n", 1)[1].split("</body>")[0]
                 bodyFormatHtml = mailBodyHtml.format(**replacement[0])
             else:
                 mailBody = self.mailBodyRaw
                 mailBodyHtml = self.mailBodyHtmlRaw
-                mailBodyHtml = mailBodyHtml.split("<body ")[1].split("\n", 1)[1].split("</body>")[0]
+                #mailBodyHtml = mailBodyHtml.split("<body ")[1].split("\n", 1)[1].split("</body>")[0]
                 bodyFormatTxt = mailBody.format(**replacement[0])
                 bodyFormatHtml = mailBodyHtml.format(**replacement[0])
 
