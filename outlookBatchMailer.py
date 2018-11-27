@@ -194,6 +194,7 @@ class CoreGui(Frame):
 
         file = open(filename, 'r')
         self.mailBodyRaw = file.read()
+        self.mailBodyHtmlRaw = self.mailBodyHtmlRaw.replace("[", "{").replace("]", "}")
 
     def LoadBodyHtml(self):
         '''Load html file contain mail body'''
