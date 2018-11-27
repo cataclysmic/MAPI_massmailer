@@ -13,7 +13,7 @@ from hashlib import md5
 from os import listdir
 #import pandas as pd
 from pandas import read_excel
-#from win32com.client import Dispatch
+from win32com.client import Dispatch
 
 
 class CoreGui(Frame):
@@ -327,12 +327,12 @@ class CoreGui(Frame):
             Msg.SentOnBehalfOfName = senderMail
 
             if mailForm == 1:
-                Msg.Body = bodyFormatTxt
+                Msg.Body = bodyFormatTxt.encode("cp1252")
             elif mailForm == 2:
-                Msg.HTMLBody = bodyFormatHtml
+                Msg.HTMLBody = bodyFormatHtml.encode("cp1252")
             else:
-                Msg.Body = bodyFormatTxt
-                Msg.HTMLBody = bodyFormatHtml
+                Msg.Body = bodyFormatTxt.encode("cp1252")
+                Msg.HTMLBody = bodyFormatHtml.encode("cp1252")
 
             # Read receipt
             if int(self.recConf.get()) == 1:
